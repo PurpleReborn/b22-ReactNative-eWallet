@@ -1,7 +1,11 @@
 # b22-ReactNative-eWallet
  frontend ovo
 
-<h1 align='center'>React Native - #nama_projek</h1>
+<h1 align='center'>React Native - Ovo</h1>
+
+<h3>available features:</h3>
+<h4>-Authentication(Sign up,Login,Edit Profile with images)</h4>
+<h4>-Transactions(Top Up,Transfer,Transactions,get History Transactions)</h4>
 
 <h2>Homescreen App</h2>
 
