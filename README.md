@@ -7,7 +7,7 @@
 
 ![ovo](https://user-images.githubusercontent.com/79769140/127907045-fcedbda4-b8e1-4f8d-b5c4-2b531a1aee78.png)
 
-<h3>Drawer Content after Login</h3>
+<h3>Homescreen App after Login</h3>
 
 ![ovo2](https://user-images.githubusercontent.com/79769140/127907061-3c8596f1-09c6-449a-9825-9b190f403e84.png)
 
