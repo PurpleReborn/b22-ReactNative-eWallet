@@ -5,11 +5,11 @@
 
 <h2>Homescreen App</h2>
 
-![home (3)](https://user-images.githubusercontent.com/79769140/127883488-1d62bd37-a479-408c-a924-2c5eeb5fc840.jpg)
+![ovo](https://user-images.githubusercontent.com/79769140/127907045-fcedbda4-b8e1-4f8d-b5c4-2b531a1aee78.png)
 
 <h3>Drawer Content after Login</h3>
 
-![afterLogin](https://user-images.githubusercontent.com/79769140/127905414-6954a347-7252-4847-8d97-079e7d2d4ddf.png)
+![ovo2](https://user-images.githubusercontent.com/79769140/127907061-3c8596f1-09c6-449a-9825-9b190f403e84.png)
 
 
 
