@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "642793498931",
+    "project_id": "ovo-push-notif",
+    "storage_bucket": "ovo-push-notif.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642793498931:android:494fd7d9ebaa0c4f80b646",
+        "android_client_info": {
+          "package_name": "com.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "642793498931-uujngl5rt652rqcvjfn477eni1ipon19.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoDWb2XIBkJxJNuxXrXGeY5wTJB28RSrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642793498931-uujngl5rt652rqcvjfn477eni1ipon19.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

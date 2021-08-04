@@ -2,6 +2,7 @@ const initialState = {
   token: null,
   errMsg: '',
   succMsg: '',
+  notifToken: null,
 };
 
 const auth = (state = initialState, action) => {
@@ -23,6 +24,12 @@ const auth = (state = initialState, action) => {
       return {
         ...state,
         errMsg: action.payload,
+      };
+    }
+    case 'AUTH_NOTIF_TOKEN': {
+      return {
+        ...state,
+        notifToken: action.payload,
       };
     }
     case 'REGISTER': {

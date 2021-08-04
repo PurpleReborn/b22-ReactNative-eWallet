@@ -37,19 +37,14 @@ class Profile extends Component {
     });
   }
 
-  // onLogout = () => {
-  //   const token = this.props.auth;
-  //   this.props.authLogout(token).then(() => {
-  //     this.setState({
-  //       isUpdate: !this.state.isUpdate,
-  //     });
-  //     ToastAndroid.showWithGravity(
-  //       'Success update data!',
-  //       ToastAndroid.LONG,
-  //       ToastAndroid.TOP,
-  //     );
-  //   });
-  // };
+  onLogout = () => {
+    this.props.authLogout();
+    // .ToastAndroid.showWithGravity(
+    //   'Success Logout!',
+    //   ToastAndroid.LONG,
+    //   ToastAndroid.TOP,
+    // );
+  };
 
   render() {
     return (
@@ -129,7 +124,7 @@ class Profile extends Component {
               </View>
               <Icon4 size={18} name="chevron-right" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.authLogout} style={styles.box4row}>
+            <TouchableOpacity onPress={this.onLogout} style={styles.box4row}>
               <View style={styles.box4row2}>
                 <Icon5 size={25} name="logout" />
                 <Text style={styles.box4text}>Log out</Text>

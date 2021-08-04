@@ -10,10 +10,12 @@ import {connect} from 'react-redux';
 import {getUser} from '../redux/actions/user';
 
 import {TouchableOpacity} from 'react-native';
+import {authNotifToken} from '../redux/actions/auth';
 
 class Home extends Component {
   componentDidMount() {
-    const {token} = this.props.auth;
+    const {token, notifToken} = this.props.auth;
+    this.props.authNotifToken(token, notifToken);
     this.props.getUser(token);
   }
 
@@ -111,7 +113,7 @@ const mapStateToProps = state => ({
   auth: state.auth,
 });
 
-const mapDispatchToProps = {getUser};
+const mapDispatchToProps = {getUser, authNotifToken};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
 

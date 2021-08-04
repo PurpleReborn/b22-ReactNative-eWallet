@@ -53,3 +53,21 @@ export const authRegister = (phone, password, number) => {
 export const authLogout = () => ({
   type: 'AUTH_LOGOUT',
 });
+
+export const authNotifToken = (token, notifToken) => {
+  console.log(token);
+  return async dispatch => {
+    const form = new URLSearchParams();
+    form.append('token', notifToken.token);
+    if (token) {
+      await http(token).post(
+        `${BACKEND_URL}/auth/registerToken`,
+        form.toString(),
+      );
+      dispatch({
+        type: 'AUTH_NOTIF_TOKEN',
+        payload: notifToken,
+      });
+    }
+  };
+};

@@ -10,10 +10,18 @@ import {
 import {topUp} from '../redux/actions/topUp';
 import {connect} from 'react-redux';
 
+import PushNotification from 'react-native-push-notification';
+import {authNotifToken} from '../redux/actions/auth';
+
 class TopUp extends Component {
   state = {
     deductedBalance: 0,
   };
+
+  // componentDidMount() {
+  //   const {token, notifToken} = this.props.auth;
+  //   this.props.authNotifToken(token, notifToken);
+  // }
 
   OnTopUp = () => {
     const {token} = this.props.auth;
@@ -22,6 +30,13 @@ class TopUp extends Component {
     };
     this.props.topUp(formData, token).then(() => {
       if (this.props.auth.errMsg === '') {
+        setTimeout(() => {
+          PushNotification.localNotification({
+            channelId: 'general-notif',
+            title: 'OVO',
+            message: 'Top Up Success',
+          });
+        }, 2000);
         ToastAndroid.showWithGravity(
           'Mobile Topup success',
           ToastAndroid.LONG,
@@ -112,7 +127,7 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = {topUp};
+const mapDispatchToProps = {topUp, authNotifToken};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopUp);
 
