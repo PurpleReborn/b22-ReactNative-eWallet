@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {Input} from 'react-native-elements';
 import {connect} from 'react-redux';
-import {authLogin} from '../redux/actions/auth';
+import {authLogin, authNotifToken} from '../redux/actions/auth';
 
 class MasukAtauDaftar extends Component {
   state = {
@@ -82,7 +82,7 @@ const mapStateToProps = state => ({
   auth: state.auth,
 });
 
-const mapDispatchToProps = {authLogin};
+const mapDispatchToProps = {authLogin, authNotifToken};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MasukAtauDaftar);
 

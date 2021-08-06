@@ -3,6 +3,8 @@ import {http} from '../../helpers/http';
 import {BACKEND_URL} from '@env';
 
 export const transferByPhone = (token, Data) => async dispatch => {
+  console.log('ini token tf');
+  console.log(token);
   const form = new URLSearchParams();
   form.append('phoneNumberRecipient', Data.phoneNumberRecipient);
   form.append('deductedBalance', Data.deductedBalance);

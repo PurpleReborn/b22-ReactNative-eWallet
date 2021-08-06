@@ -10,6 +10,7 @@ import {
 import {transaction} from '../redux/actions/trx';
 import {connect} from 'react-redux';
 import {Input} from 'react-native-elements';
+import PushNotification from 'react-native-push-notification';
 
 class trxDetail extends Component {
   state = {
@@ -29,6 +30,13 @@ class trxDetail extends Component {
     };
     this.props.transaction(token, formData).then(() => {
       if (this.props.auth.errMsg === '') {
+        setTimeout(() => {
+          PushNotification.localNotification({
+            channelId: 'general-notif',
+            title: 'OVO',
+            message: 'Payment Success',
+          });
+        }, 2000);
         ToastAndroid.showWithGravity(
           'Payment Success',
           ToastAndroid.LONG,

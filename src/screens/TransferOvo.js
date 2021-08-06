@@ -13,6 +13,8 @@ import {Formik} from 'formik';
 import {connect} from 'react-redux';
 import {transferByPhone} from '../redux/actions/transfer';
 import {getUser} from '../redux/actions/user';
+import PushNotification from 'react-native-push-notification';
+import {authNotifToken} from '../redux/actions/auth';
 
 class TransferOvo extends Component {
   constructor(props) {
@@ -40,6 +42,13 @@ class TransferOvo extends Component {
       this.setState({
         isUpdate: !this.state.isUpdate,
       });
+      setTimeout(() => {
+        PushNotification.localNotification({
+          channelId: 'general-notif',
+          title: 'OVO',
+          message: 'Transfers success',
+        });
+      }, 2000);
       ToastAndroid.showWithGravity(
         'Success transfer!',
         ToastAndroid.LONG,
@@ -86,7 +95,7 @@ class TransferOvo extends Component {
                   <View>
                     <Text style={styles.h3}>OVO Cash</Text>
                     <Text>
-                      Balance Rp <Text>0</Text>
+                      Balance Rp <Text>{this.props.user.details.balance}</Text>
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -131,7 +140,7 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = {transferByPhone, getUser};
+const mapDispatchToProps = {authNotifToken, transferByPhone, getUser};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TransferOvo);
 

@@ -14,7 +14,8 @@ import {authNotifToken} from '../redux/actions/auth';
 
 class Home extends Component {
   componentDidMount() {
-    const {token, notifToken} = this.props.auth;
+    const {token} = this.props.auth;
+    const {notifToken} = this.props.auth;
     this.props.authNotifToken(token, notifToken);
     this.props.getUser(token);
   }

@@ -34,7 +34,7 @@ export const authRegister = (phone, password, number) => {
     form.append('number', number);
     try {
       const {data} = await http().post(
-        `${BACKEND_URL}/auth/register`,
+        `${BACKEND_URL}/users/register`,
         form.toString(),
       );
       dispatch({
@@ -61,7 +61,7 @@ export const authNotifToken = (token, notifToken) => {
     form.append('token', notifToken.token);
     if (token) {
       await http(token).post(
-        `${BACKEND_URL}/auth/registerToken`,
+        `${BACKEND_URL}/users/registerToken`,
         form.toString(),
       );
       dispatch({

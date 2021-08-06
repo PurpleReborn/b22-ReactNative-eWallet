@@ -24,11 +24,11 @@ class History extends Component {
         historySender: this.props.transfers.dataSender,
       });
     });
-    this.props.historyRecipient(token, this.state.pageRecipient).then(() => {
-      this.setState({
-        historyRecipient: this.props.transfers.dataRecipient,
-      });
-    });
+    // this.props.historyRecipient(token, this.state.pageRecipient).then(() => {
+    //   this.setState({
+    //     historyRecipient: this.props.transfers.dataRecipient,
+    //   });
+    // });
   }
 
   loadMoreSender = () => {
@@ -51,27 +51,27 @@ class History extends Component {
     );
   };
 
-  loadMoreRecipient = () => {
-    const {token} = this.props.auth;
-    this.setState(
-      {
-        pageRecipient: this.state.pageRecipient + 1,
-      },
-      () => {
-        this.props
-          .historyRecipient(token, this.state.pageRecipient)
-          .then(() => {
-            if (this.props.transfers.msgRecipient !== 'User Not Found') {
-              this.setState({
-                historyRecipient: this.state.historyRecipient.concat(
-                  this.props.transfers.dataRecipient,
-                ),
-              });
-            }
-          });
-      },
-    );
-  };
+  // loadMoreRecipient = () => {
+  //   const {token} = this.props.auth;
+  //   this.setState(
+  //     {
+  //       pageRecipient: this.state.pageRecipient + 1,
+  //     },
+  //     () => {
+  //       this.props
+  //         .historyRecipient(token, this.state.pageRecipient)
+  //         .then(() => {
+  //           if (this.props.transfers.msgRecipient !== 'User Not Found') {
+  //             this.setState({
+  //               historyRecipient: this.state.historyRecipient.concat(
+  //                 this.props.transfers.dataRecipient,
+  //               ),
+  //             });
+  //           }
+  //         });
+  //     },
+  //   );
+  // };
 
   render() {
     return (
@@ -111,6 +111,7 @@ class History extends Component {
                         <Text style={styles.textBalance}>
                           {item.deductedBalance}
                         </Text>
+                        <Text>Success</Text>
                       </View>
                     </View>
                   )}
@@ -119,15 +120,15 @@ class History extends Component {
                 />
               )}
 
-              <TouchableOpacity
-                onPress={() => this.setState({status: 'Receive'})}
+              {/* <TouchableOpacity
+                // onPress={() => this.setState({status: 'Receive'})}
                 style={styles.row1}>
                 <View style={styles.row2}>
                   <Text style={styles.tujuan}>Receive</Text>
                   <Text style={styles.h3}>Ke Sesama OVO</Text>
                 </View>
                 <Icon4 size={18} name="chevron-right" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               {this.state.status === 'Receive' && (
                 <FlatList
@@ -216,9 +217,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
   },
-  box1: {
-    paddingVertical: 20,
-  },
+  // box1: {
+  //   paddingVertical: 20,
+  // },
   child: {
     flex: 1,
   },
