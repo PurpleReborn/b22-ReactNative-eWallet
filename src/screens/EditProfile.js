@@ -33,10 +33,17 @@ class EditProfile extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {token} = this.props.auth;
     if (prevState.isUpdate !== this.state.isUpdate) {
+      const {token} = this.props.auth;
       this.props.getUser(token);
     }
+    console.log(prevState.isUpdate);
+    console.log(this.state.isUpdate);
+  }
+
+  componentDidMount() {
+    const {token} = this.props.auth;
+    this.props.getUser(token);
   }
 
   onUpdate = values => {
@@ -124,6 +131,57 @@ class EditProfile extends Component {
   //   });
   // };
 
+  onPick = () => {
+    Alert.alert('Select Picture', 'Please choose a picture', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Gallery',
+        onPress: () => launchImageLibrary({quality: 1}, this.selectPicture),
+      },
+      {
+        text: 'Camera',
+        onPress: () => launchCamera({quality: 1}, this.selectPicture),
+      },
+    ]);
+  };
+
+  selectPicture = e => {
+    if (!e.didCancel) {
+      const maxSize = 1024 * 1024 * 2;
+      if (e.assets[0].fileSize < maxSize) {
+        if (
+          e.assets[0].type === 'image/jpeg' ||
+          e.assets[0].type === 'image/jpg' ||
+          e.assets[0].type === 'image/png'
+        ) {
+          this.setState({
+            pictureUri: e.assets[0].uri,
+            picture: e.assets[0],
+          });
+        } else {
+          ToastAndroid.showWithGravity(
+            'Not a picture',
+            ToastAndroid.LONG,
+            ToastAndroid.CENTER,
+          );
+        }
+      } else {
+        ToastAndroid.showWithGravity(
+          'file To Large',
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
+        );
+        this.setState({
+          pictureUri: '',
+          picture: null,
+        });
+      }
+    }
+  };
+
   // onPick = () => {
   //   Alert.alert('Option', 'Choose your image', [
   //     {
@@ -141,23 +199,6 @@ class EditProfile extends Component {
   //   ]);
   // };
 
-  onPick = () => {
-    Alert.alert('Option', 'Choose your image', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Camera',
-        onPress: () => this.selectLaunch(),
-      },
-      {
-        text: 'Galery',
-        onPress: () => this.selectPict(),
-      },
-    ]);
-  };
-
   // selectPict = e => {
   //   if (!e.didCancel) {
   //     this.setState({
@@ -167,46 +208,46 @@ class EditProfile extends Component {
   //   }
   // };
 
-  selectPict = e => {
-    // let options = {
-    //   mediaType: 'photo',
-    //   maxWidth: 150,
-    //   maxHeight: 150,
-    // };
-    launchImageLibrary({}, response => {
-      if (!response.didCancel) {
-        const maxSize = 1024 * 1024 * 2;
-        if (response.assets[0].fileSize < maxSize) {
-          this.setState({
-            picture: response.assets[0],
-            pictureUri: response.assets[0].uri,
-          });
-        } else {
-          ToastAndroid.showWithGravity(
-            'Picture max size 2MB',
-            ToastAndroid.LONG,
-            ToastAndroid.TOP,
-          );
-        }
-      }
-    });
-  };
+  // selectPict = e => {
+  //   // let options = {
+  //   //   mediaType: 'photo',
+  //   //   maxWidth: 150,
+  //   //   maxHeight: 150,
+  //   // };
+  //   launchImageLibrary({}, response => {
+  //     if (!response.didCancel) {
+  //       const maxSize = 1024 * 1024 * 2;
+  //       if (response.assets[0].fileSize < maxSize) {
+  //         this.setState({
+  //           // picture: response.assets[0],
+  //           picture: response.assets[0].uri,
+  //         });
+  //       } else {
+  //         ToastAndroid.showWithGravity(
+  //           'Picture max size 2MB',
+  //           ToastAndroid.LONG,
+  //           ToastAndroid.TOP,
+  //         );
+  //       }
+  //     }
+  //   });
+  // };
 
-  selectLaunch = e => {
-    let options = {
-      mediaType: 'photo',
-      // maxWidth: 150,
-      // maxHeight: 150,
-    };
-    launchCamera(options, response => {
-      if (!response.didCancel) {
-        this.setState({
-          picture: response.assets[0],
-          pictureUri: response.assets[0].uri,
-        });
-      }
-    });
-  };
+  // selectLaunch = e => {
+  //   let options = {
+  //     mediaType: 'photo',
+  //     maxWidth: 150,
+  //     maxHeight: 150,
+  //   };
+  //   launchCamera(options, response => {
+  //     if (!response.didCancel) {
+  //       this.setState({
+  //         // picture: response.assets[0],
+  //         picture: response.assets[0].uri,
+  //       });
+  //     }
+  //   });
+  // };
 
   render() {
     return (
@@ -229,18 +270,23 @@ class EditProfile extends Component {
                     <Text style={styles.h1}>EDIT PROFILE</Text>
                   </View>
                   <View style={styles.parent4}>
-                    {this.props.user.details.picture === '' ? (
+                    {/* {this.props.user.details.picture !== '' ? (
                       <Image
                         style={styles.image}
-                        source={
-                          this.state.pictureUri === ''
-                            ? {
-                                uri: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
-                              }
-                            : {uri: this.state.pictureUri}
-                        }
+                        source={{
+                          uri: `${BACKEND_URL}${this.props.user.details.picture}`,
+                        }}
                       />
                     ) : (
+                      <Image
+                        style={styles.image}
+                        source={{
+                          uri: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                        }}
+                      />
+                    )} */}
+
+                    {this.props.user.details.picture !== null && (
                       <Image
                         style={styles.image}
                         source={
@@ -254,6 +300,21 @@ class EditProfile extends Component {
                         }
                       />
                     )}
+                    {this.props.user.details.picture === null && (
+                      <Image
+                        style={styles.image}
+                        source={
+                          this.state.pictureUri === ''
+                            ? {
+                                uri: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                              }
+                            : {
+                                uri: this.state.pictureUri,
+                              }
+                        }
+                      />
+                    )}
+
                     <TouchableOpacity onPress={this.onPick}>
                       <Text style={styles.perbarui}>Perbarui Foto Profile</Text>
                     </TouchableOpacity>
