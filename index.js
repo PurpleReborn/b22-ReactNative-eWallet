@@ -9,9 +9,10 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import PushNotification from 'react-native-push-notification';
 import reduxConfig from './src/redux/store';
+import {PersistGate} from 'redux-persist/integration/react';
 
 import {Provider} from 'react-redux';
-import store from './src/redux/reducers/store';
+// import store from './src/redux/reducers/store';
 
 const redux = reduxConfig();
 
@@ -32,8 +33,10 @@ PushNotification.createChannel({
 
 const Main = () => {
   return (
-    <Provider store={store}>
-      <App />
+    <Provider store={redux.store}>
+      <PersistGate persistor={redux.persistor}>
+        <App />
+      </PersistGate>
     </Provider>
   );
 };

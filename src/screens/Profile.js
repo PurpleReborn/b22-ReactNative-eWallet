@@ -5,13 +5,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  // ToastAndroid,
+  ScrollView,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/dist/FontAwesome';
 import Icon3 from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import Icon4 from 'react-native-vector-icons/dist/Feather';
 import Icon5 from 'react-native-vector-icons/dist/MaterialCommunityIcons';
+import Icon6 from 'react-native-vector-icons/dist/Fontisto';
 import Footer from '../components/Footer';
 import {connect} from 'react-redux';
 import {getUser} from '../redux/actions/user';
@@ -25,6 +27,11 @@ class Profile extends Component {
       isUpdate: false,
     };
   }
+
+  // onLogout = () => {
+  //   this.props.authLogout();
+  // };
+
   componentDidMount() {
     const {token} = this.props.auth;
     this.props.getUser(token).then(() => {
@@ -38,22 +45,28 @@ class Profile extends Component {
   }
 
   onLogout = () => {
-    this.props.authLogout();
-    // .ToastAndroid.showWithGravity(
+    // ToastAndroid.showWithGravity(
     //   'Success Logout!',
     //   ToastAndroid.LONG,
     //   ToastAndroid.TOP,
     // );
+    // setTimeout(this.props.authLogout(), 3000);
+    this.props.authLogout();
+    ToastAndroid.showWithGravity(
+      'Logout success',
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+    );
   };
 
   render() {
     return (
       <View style={styles.parent}>
-        <View style={styles.child}>
+        <ScrollView showsVerticalScrollIndicator={false} style={styles.child}>
           <View style={styles.parent1}>
-            <Text style={styles.h1}>Profile </Text>
+            <Text style={styles.h1}>Profile</Text>
             <TouchableOpacity style={styles.box1}>
-              {this.props.user.details.picture !== null ? (
+              {this.props.user.details.picture !== '' ? (
                 <Image
                   style={styles.img}
                   source={{
@@ -79,7 +92,7 @@ class Profile extends Component {
                   size={30}
                   name="dot-circle-o"
                 />
-                <Text style={styles.ovoPremier}>OVO Premier</Text>
+                <Text style={styles.ovoPremier}>OXO Premier</Text>
               </View>
               <View>
                 <Text>Lihat Detail</Text>
@@ -87,7 +100,7 @@ class Profile extends Component {
             </View>
           </View>
           <View style={styles.box3}>
-            <Text style={styles.ovoid}>OVO ID</Text>
+            <Text style={styles.ovoid}>OXO ID</Text>
             <View style={styles.box3row}>
               <View style={styles.qrwrap}>
                 <Icon3 size={25} name="qrcode-scan" />
@@ -132,7 +145,19 @@ class Profile extends Component {
               <Icon4 size={18} name="chevron-right" />
             </TouchableOpacity>
           </View>
-        </View>
+          <View style={styles.box4}>
+            <Text style={styles.akun}>Keamanan</Text>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate('change')}
+              style={styles.box4row}>
+              <View style={styles.box4row2}>
+                <Icon6 size={20} name="locked" />
+                <Text style={styles.box4text}>Ubah Security Code</Text>
+              </View>
+              <Icon4 size={18} name="chevron-right" />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
         <Footer navigation={this.props.navigation} />
       </View>
     );

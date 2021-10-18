@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Text, View, StyleSheet, ScrollView} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon2 from 'react-native-vector-icons/dist/AntDesign';
 import Icon3 from 'react-native-vector-icons/dist/Ionicons';
@@ -28,9 +28,9 @@ class Home extends Component {
             colors={['#49268c', '#5434a4', '#685ad5']}
             style={styles.header}>
             <View style={styles.row1}>
-              <Text style={styles.h1}> OVO </Text>
+              <Text style={styles.h1}> OXO </Text>
             </View>
-            <Text style={styles.ovocash}>OVO Cash</Text>
+            <Text style={styles.ovocash}>OXO Cash</Text>
             <View style={styles.row2}>
               <Text style={styles.rp}>Rp</Text>
               <Text style={styles.saldo}>
@@ -38,7 +38,7 @@ class Home extends Component {
               </Text>
             </View>
             <View style={styles.row3}>
-              <Text style={styles.textpoint}>OVO Points</Text>
+              <Text style={styles.textpoint}>OXO Points</Text>
               <Text style={styles.point}>0</Text>
             </View>
           </LinearGradient>
@@ -102,6 +102,59 @@ class Home extends Component {
               />
             </TouchableOpacity>
           </View>
+          <View style={styles.trxWrap}>
+            <TouchableOpacity style={styles.flashWrap}>
+              <Icon5
+                style={styles.flash}
+                size={35}
+                name="shield-check"
+                color="#F1C40F"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate('trxDetail')}
+              style={styles.cellWrap}>
+              <Icon3
+                style={styles.cell}
+                size={35}
+                color="#3498DB"
+                name="bar-chart-sharp"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.gameWrap}>
+              <Icon3
+                style={styles.game}
+                size={35}
+                color="#C8F557"
+                name="md-umbrella"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tvWrap}>
+              <Icon2
+                style={styles.tv}
+                size={35}
+                color="#FF6252"
+                name="appstore1"
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.infoWrap}>
+            <View style={styles.infoWrap2}>
+              <Text style={styles.infoText}>Info dan Promo Spesial</Text>
+              <Text style={styles.infoText2}>Lihat Semua</Text>
+            </View>
+            <View style={styles.contentWrap}>
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                horizontal={true}>
+                <View style={styles.content} />
+                <View style={styles.content} />
+                {/* <Text style={styles.test2}>1</Text>
+                <Text>1</Text>
+                <Text>1</Text> */}
+              </ScrollView>
+            </View>
+          </View>
         </View>
         <Footer navigation={this.props.navigation} />
       </View>
@@ -121,6 +174,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Home);
 const styles = StyleSheet.create({
   parent: {
     flex: 1,
+    backgroundColor: 'white',
   },
   parent2: {
     flex: 1,
@@ -185,6 +239,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: 80,
     paddingHorizontal: 10,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
   icon: {
     justifyContent: 'center',
@@ -288,5 +350,38 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 40,
     marginTop: 30,
+    marginBottom: 20,
+  },
+  infoWrap: {
+    borderTopWidth: 8,
+    borderColor: '#ECF0F1',
+  },
+  infoText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  infoText2: {
+    color: '#3AE6EB',
+  },
+  infoWrap2: {
+    paddingTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+  },
+  content: {
+    height: 150,
+    width: 320,
+    backgroundColor: '#685ad5',
+    marginHorizontal: 20,
+    marginTop: 15,
+    borderRadius: 10,
+  },
+  contentWrap: {
+    height: 150,
+    flexDirection: 'row',
+  },
+  test2: {
+    paddingRight: 400,
   },
 });

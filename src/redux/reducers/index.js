@@ -4,7 +4,29 @@ import user from './user';
 import topUp from './topUp';
 import transfers from './transfer';
 import trx from './trx';
+// import global from './global';
 
-const rootReducer = combineReducers({auth, user, topUp, transfers, trx});
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {persistReducer} from 'redux-persist';
 
-export default rootReducer;
+const persistAuth = {
+  storage: AsyncStorage,
+  key: 'auth',
+};
+
+// const persistUser = {
+//   key: 'user',
+//   storage: AsyncStorage,
+// };
+
+const reducer = combineReducers({
+  auth: persistReducer(persistAuth, auth),
+  // user: persistReducer(persistUser, user),
+  user,
+  topUp,
+  transfers,
+  trx,
+  // global,
+});
+
+export default reducer;

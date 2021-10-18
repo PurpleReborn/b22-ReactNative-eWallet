@@ -1,169 +1,227 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
-import Icon4 from 'react-native-vector-icons/dist/Feather';
-
+import {Text, View, StyleSheet, FlatList, TextInput} from 'react-native';
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {connect} from 'react-redux';
-import {historySender, historyRecipient} from '../redux/actions/transfer';
+import {
+  historySender,
+  historySender2,
+  historyRecipient,
+} from '../redux/actions/transfer';
+import {Picker} from '@react-native-picker/picker';
 
 class History extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: '',
-      pageSender: 1,
-      pageRecipient: 1,
-      historySender: [],
-      historyRecipient: [],
+      search: '',
+      page: 1,
+      itemSender: [],
+      data: [],
+      sort: '1',
     };
   }
 
-  componentDidMount() {
+  data = () => {
     const {token} = this.props.auth;
-    this.props.historySender(token, this.state.pageSender).then(() => {
-      this.setState({
-        historySender: this.props.transfers.dataSender,
-      });
+    const page = 1;
+    const sort = this.state.sort;
+    this.props.historySender(token, sort, page).then(() => {
+      this.setState({data: this.props.transfers.dataSender});
+      this.setState({page: 1});
     });
-    // this.props.historyRecipient(token, this.state.pageRecipient).then(() => {
-    //   this.setState({
-    //     historyRecipient: this.props.transfers.dataRecipient,
-    //   });
-    // });
-  }
-
-  loadMoreSender = () => {
-    const {token} = this.props.auth;
-    this.setState(
-      {
-        pageSender: this.state.pageSender + 1,
-      },
-      () => {
-        this.props.historySender(token, this.state.pageSender).then(() => {
-          if (this.props.transfers.msgSender !== 'User Not Found') {
-            this.setState({
-              historySender: this.state.historySender.concat(
-                this.props.transfers.dataSender,
-              ),
-            });
-          }
-        });
-      },
-    );
   };
 
-  // loadMoreRecipient = () => {
+  componentDidMount() {
+    this.data();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.sort !== this.state.sort) {
+      this.data();
+    }
+    console.log(prevState.sort);
+    console.log(this.state.sort);
+  }
+
+  search = () => {
+    const {token} = this.props.auth;
+    const search = this.state.search;
+    const sort = this.state.sort;
+    const page = 1;
+    this.props.historySender2(token, sort, search, page).then(() => {
+      this.setState({itemSender: this.props.transfers.search});
+      this.setState({page: 1});
+    });
+  };
+
+  // loadMore = () => {
+  //   const page = this.state.page;
   //   const {token} = this.props.auth;
-  //   this.setState(
-  //     {
-  //       pageRecipient: this.state.pageRecipient + 1,
-  //     },
-  //     () => {
-  //       this.props
-  //         .historyRecipient(token, this.state.pageRecipient)
-  //         .then(() => {
-  //           if (this.props.transfers.msgRecipient !== 'User Not Found') {
-  //             this.setState({
-  //               historyRecipient: this.state.historyRecipient.concat(
-  //                 this.props.transfers.dataRecipient,
-  //               ),
-  //             });
-  //           }
-  //         });
-  //     },
-  //   );
+  //   const search = this.state.search;
+  //   if (this.state.page < this.props.transfers.pageInfo.totalPage) {
+  //     this.setState(
+  //       {
+  //         page: this.state.page + 1,
+  //       },
+  //       () => {
+  //         this.props.historySender(token, page, search);
+  //         console.log(page);
+  //       },
+  //     );
+  //   }
   // };
 
+  dataSearch = () => {
+    const {token} = this.props.auth;
+    const search = this.state.search;
+    const page = this.state.page;
+    const sort = this.state.sort;
+    if (search !== '') {
+      this.props.historySender2(token, sort, search, page).then(() => {
+        this.setState({
+          itemSender: this.state.itemSender,
+        });
+      });
+    } else {
+      this.props.historySender(token, sort, page).then(() => {
+        this.setState({
+          data: this.state.data.concat(this.props.transfers.dataSender),
+        });
+      });
+    }
+  };
+
+  loadMore = () => {
+    const search = this.state.search;
+    if (search !== '') {
+      if (this.state.page < this.props.transfers.pageInfoSearch.totalPage) {
+        this.setState(
+          {
+            page: this.state.page + 1,
+          },
+          () => {
+            this.dataSearch();
+          },
+        );
+      }
+    } else {
+      if (this.state.page < this.props.transfers.pageInfo.totalPage) {
+        this.setState(
+          {
+            page: this.state.page + 1,
+          },
+          () => {
+            this.dataSearch();
+          },
+        );
+      }
+    }
+  };
+
+  handleChange = val => {
+    this.setState({
+      search: val,
+    });
+  };
+
   render() {
+    // console.log(this.state.page, 'page');
     return (
       <View style={styles.parent}>
-        <View style={styles.child}>
-          <View style={styles.parent2}>
-            <View style={styles.parent3}>
-              <Text style={styles.h1}> History </Text>
-            </View>
-            <View style={styles.box1}>
-              <TouchableOpacity
-                onPress={() => this.setState({status: 'Sending'})}
-                style={styles.row1}>
-                <View style={styles.row2}>
-                  <Text style={styles.tujuan}>Transfer</Text>
-                  <Text style={styles.h3}>Ke Sesama OVO</Text>
-                </View>
-                <Icon4 size={18} name="chevron-right" />
-              </TouchableOpacity>
-
-              {this.state.status === 'Sending' && (
-                <FlatList
-                  style={styles.flatList}
-                  scrollEnabled={true}
-                  showsVerticalScrollIndicator={false}
-                  keyExtractor={item => item.id}
-                  data={this.state.historySender}
-                  renderItem={({item}) => (
-                    <View style={styles.flatWrap}>
-                      <View style={styles.flatItem}>
-                        <Text style={styles.textName}>
-                          Transfer to {item.userDetailRecipient.name}
-                        </Text>
-                        <Text style={styles.textDesc}>{item.description}</Text>
-                      </View>
-                      <View style={styles.flatItem}>
-                        <Text style={styles.textBalance}>
-                          {item.deductedBalance}
-                        </Text>
-                        <Text>Success</Text>
-                      </View>
-                    </View>
-                  )}
-                  onEndReached={this.loadMoreSender}
-                  onEndReachedThreshold={0}
-                />
-              )}
-
-              {/* <TouchableOpacity
-                // onPress={() => this.setState({status: 'Receive'})}
-                style={styles.row1}>
-                <View style={styles.row2}>
-                  <Text style={styles.tujuan}>Receive</Text>
-                  <Text style={styles.h3}>Ke Sesama OVO</Text>
-                </View>
-                <Icon4 size={18} name="chevron-right" />
-              </TouchableOpacity> */}
-
-              {this.state.status === 'Receive' && (
-                <FlatList
-                  style={styles.flatList}
-                  scrollEnabled={true}
-                  showsVerticalScrollIndicator={false}
-                  keyExtractor={item => item.id}
-                  data={this.state.historyRecipient}
-                  renderItem={({item}) => (
-                    <View style={styles.flatWrap}>
-                      <View style={styles.flatItem}>
-                        <Text style={styles.textName}>
-                          Recipient from {item.userDetailSender.name}
-                        </Text>
-                        <Text style={styles.textDesc}>{item.description}</Text>
-                      </View>
-                      <View style={styles.flatItem}>
-                        <Text style={styles.textBalance}>
-                          {item.deductedBalance}
-                        </Text>
-                      </View>
-                    </View>
-                  )}
-                  onEndReached={this.loadMoreRecipientr}
-                  onEndReachedThreshold={0}
-                  // ListFooterComponent={
-                  //   this.props.transfers.msgReceiver !== 'User Not Found' &&
-                  //   footerComponent
-                  // }
-                  // ListFooterComponentStyle={styles.footer}
-                />
-              )}
-            </View>
-          </View>
+        <View style={styles.parent3}>
+          <Text style={styles.h1}> History </Text>
         </View>
+
+        <View style={styles.search}>
+          <Icon name="search" color="#000" size={20} />
+          <TextInput
+            onChangeText={this.handleChange}
+            onSubmitEditing={() => this.search()}
+            value={this.state.search}
+            style={styles.searchText}
+            placeholder="Search"
+          />
+        </View>
+        <View style={styles.pickerWrap}>
+          <Picker
+            style={styles.picker}
+            itemStyle={styles.pickerText}
+            selectedValue={this.state.sort}
+            onValueChange={(itemValue, itemIndex) =>
+              this.setState({sort: itemValue})
+            }>
+            <Picker.Item label="Terbaru" value="1" />
+            <Picker.Item label="Terlama" value="2" />
+          </Picker>
+        </View>
+        {this.state.search === '' ? (
+          <FlatList
+            // style={styles.flatList}
+            vertical
+            // scrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={item => item.id}
+            data={this.state.data}
+            renderItem={({item}) => (
+              <View>
+                <View style={styles.createdWrap}>
+                  <Text style={styles.createdText}>
+                    {item.createdAt.slice(0, 10)}
+                  </Text>
+                </View>
+                <View style={styles.flatWrap}>
+                  <View style={styles.flatItem}>
+                    <Text style={styles.textName}>
+                      Transfer to {item.userDetailRecipient.name}
+                    </Text>
+                  </View>
+                  <View style={styles.flatItem}>
+                    <Text style={styles.textBalance}>
+                      {item.deductedBalance}
+                    </Text>
+                    <Text style={styles.outGoing}>{item.description}</Text>
+                  </View>
+                </View>
+              </View>
+            )}
+            onEndReached={this.loadMore}
+            onEndReachedThreshold={0.1}
+          />
+        ) : (
+          <FlatList
+            // style={styles.flatList}
+            vertical
+            // scrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={item => item.id}
+            data={this.state.itemSender}
+            renderItem={({item}) => (
+              <View>
+                <View style={styles.createdWrap}>
+                  <Text style={styles.createdText}>
+                    {item.createdAt.slice(0, 10)}
+                    {/* {item.createdAt} */}
+                  </Text>
+                </View>
+                <View style={styles.flatWrap}>
+                  <View style={styles.flatItem}>
+                    <Text style={styles.textName}>
+                      Transfer to {item.userDetailRecipient.name}
+                    </Text>
+                  </View>
+                  <View style={styles.flatItem}>
+                    <Text style={styles.textBalance}>
+                      {item.deductedBalance}
+                    </Text>
+                    <Text style={styles.outGoing}>{item.description}</Text>
+                  </View>
+                </View>
+              </View>
+            )}
+            onEndReached={this.loadMore}
+            onEndReachedThreshold={0.1}
+          />
+        )}
       </View>
     );
   }
@@ -175,7 +233,7 @@ const mapStateToProps = state => ({
   transfers: state.transfers,
 });
 
-const mapDispatchToProps = {historySender, historyRecipient};
+const mapDispatchToProps = {historySender, historySender2, historyRecipient};
 
 export default connect(mapStateToProps, mapDispatchToProps)(History);
 
@@ -231,11 +289,55 @@ const styles = StyleSheet.create({
     color: '#909497',
   },
   flatList: {
-    paddingHorizontal: 20,
+    width: '100%',
+    flex: 1,
   },
   flatWrap: {
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderColor: '#D7DBDD',
+    paddingHorizontal: 20,
+  },
+  textName: {
+    fontWeight: 'bold',
+  },
+  outGoing: {
+    color: 'gray',
+  },
+  createdWrap: {
+    backgroundColor: '#D7DBDD',
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    // height: 100,
+  },
+  createdText: {
+    fontWeight: 'bold',
+    color: 'gray',
+  },
+  search: {
+    flexDirection: 'row',
+    paddingLeft: 20,
+    marginTop: 10,
+    backgroundColor: '#D7DBDD',
+    marginHorizontal: 50,
+    height: 50,
+    alignItems: 'center',
+    borderRadius: 60,
+  },
+  searchText: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#757473',
+    paddingHorizontal: 16,
+  },
+  picker: {
+    fontWeight: 'bold',
+    width: 150,
+  },
+  pickerText: {
+    fontWeight: 'bold',
+  },
+  pickerWrap: {
+    alignItems: 'center',
   },
 });

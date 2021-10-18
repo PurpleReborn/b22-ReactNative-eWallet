@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import img1 from '../images/ovo1.png';
+import img1 from '../images/ovo1.jpg';
 
 class HomeScreen extends Component {
   render() {
@@ -9,7 +9,7 @@ class HomeScreen extends Component {
         <Text style={styles.h1}>OVO</Text>
         <Image style={styles.img1} source={img1} />
         <View>
-          <Text style={styles.h2}>Solusi Cerdas Finansial</Text>
+          <Text style={styles.h2}>Solusi Finansial masa kini</Text>
           <Text style={styles.h3}>
             Nikmati berbagai layanan finansial dan kemudahan pembayaran dalam
             genggaman

@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   TextInput,
   ToastAndroid,
+  ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {Input} from 'react-native-elements';
 
@@ -13,7 +15,6 @@ import {Formik} from 'formik';
 import {connect} from 'react-redux';
 import {transferByPhone} from '../redux/actions/transfer';
 import {getUser} from '../redux/actions/user';
-import PushNotification from 'react-native-push-notification';
 import {authNotifToken} from '../redux/actions/auth';
 
 class TransferOvo extends Component {
@@ -38,98 +39,100 @@ class TransferOvo extends Component {
       deductedBalance: values.deductedBalance,
       description: values.description,
     };
-    this.props.transferByPhone(token, data).then(() => {
-      this.setState({
-        isUpdate: !this.state.isUpdate,
-      });
-      setTimeout(() => {
-        PushNotification.localNotification({
-          channelId: 'general-notif',
-          title: 'OVO',
-          message: 'Transfers success',
+    if (data.deductedBalance !== '') {
+      this.props.transferByPhone(token, data).then(() => {
+        this.setState({
+          isUpdate: !this.state.isUpdate,
         });
-      }, 2000);
+
+        return this.props.navigation.reset({
+          routes: [{name: 'home'}],
+        });
+      });
+    } else {
       ToastAndroid.showWithGravity(
-        'Success transfer!',
+        'Masukan Nomor Ponsel dan Nominal',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
-      return this.props.navigation.reset({
-        routes: [{name: 'home'}],
-      });
-    });
+    }
   };
 
   render() {
     return (
-      <Formik
-        initialValues={{
-          phoneNumberRecipient: '',
-          deductedBalance: '',
-          description: '',
-        }}
-        onSubmit={values => this.transfer(values)}>
-        {({handleChange, handleBlur, handleSubmit, errors, values}) => (
-          <View style={styles.parent}>
-            <View style={styles.parent2}>
-              <View style={styles.parent3}>
-                <Text style={styles.h1}> KE SESAMA OVO </Text>
-              </View>
-              <View style={styles.inputWrap}>
-                <Input
-                  style={styles.input}
-                  placeholderTextColor="#566573"
-                  placeholder="Masukkan nomor ponsel"
-                  keyboardType="number-pad"
-                  onChangeText={handleChange('phoneNumberRecipient')}
-                  onBlur={handleBlur('phoneNumberRecipient')}
-                  value={values.phoneNumberRecipient}
-                />
-              </View>
-              <View style={styles.box1}>
-                <Text style={styles.h2}>Sumber Dana</Text>
-                <TouchableOpacity style={styles.row1}>
-                  <View style={styles.ovo}>
-                    <Text style={styles.ovotext}>OVO</Text>
+      <KeyboardAvoidingView behavior="position">
+        <ScrollView>
+          <Formik
+            initialValues={{
+              phoneNumberRecipient: '',
+              deductedBalance: '',
+              description: '',
+            }}
+            onSubmit={values => this.transfer(values)}>
+            {({handleChange, handleBlur, handleSubmit, errors, values}) => (
+              <View style={styles.parent}>
+                <View style={styles.parent2}>
+                  <View style={styles.parent3}>
+                    <Text style={styles.h1}> KE SESAMA OXO </Text>
                   </View>
-                  <View>
-                    <Text style={styles.h3}>OVO Cash</Text>
-                    <Text>
-                      Balance Rp <Text>{this.props.user.details.balance}</Text>
-                    </Text>
+                  <View style={styles.inputWrap}>
+                    <Input
+                      style={styles.input}
+                      placeholderTextColor="#566573"
+                      placeholder="Masukkan nomor ponsel"
+                      keyboardType="number-pad"
+                      onChangeText={handleChange('phoneNumberRecipient')}
+                      onBlur={handleBlur('phoneNumberRecipient')}
+                      value={values.phoneNumberRecipient}
+                    />
                   </View>
+                  <View style={styles.box1}>
+                    <Text style={styles.h2}>Sumber Dana</Text>
+                    <TouchableOpacity style={styles.row1}>
+                      <View style={styles.ovo}>
+                        <Text style={styles.ovotext}>OXO</Text>
+                      </View>
+                      <View>
+                        <Text style={styles.h3}>OXO Cash</Text>
+                        <Text>
+                          Balance Rp{' '}
+                          <Text>{this.props.user.details.balance}</Text>
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.boxRp}>
+                    <Text style={styles.nominal}>Nominal Transfer</Text>
+                    <TextInput
+                      style={styles.input2}
+                      placeholder="Rp0"
+                      placeholderTextColor="#000"
+                      type="number"
+                      keyboardType="number-pad"
+                      onChangeText={handleChange('deductedBalance')}
+                      onBlur={handleBlur('deductedBalance')}
+                      value={values.deductedBalance}
+                    />
+                  </View>
+                  <View style={styles.inputWrap}>
+                    <Input
+                      style={styles.input}
+                      placeholderTextColor="#566573"
+                      placeholder="Pesan (opsional)"
+                      onChangeText={handleChange('description')}
+                      onBlur={handleBlur('description')}
+                      value={values.description}
+                    />
+                  </View>
+                </View>
+                <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
+                  <Text style={styles.btnText}>LANJUTKAN</Text>
                 </TouchableOpacity>
               </View>
-              <View style={styles.boxRp}>
-                <Text style={styles.nominal}>Nominal Transfer</Text>
-                <TextInput
-                  style={styles.input2}
-                  placeholder="Rp0"
-                  placeholderTextColor="#000"
-                  type="number"
-                  keyboardType="number-pad"
-                  onChangeText={handleChange('deductedBalance')}
-                  onBlur={handleBlur('deductedBalance')}
-                  value={values.deductedBalance}
-                />
-              </View>
-              <View style={styles.inputWrap}>
-                <Input
-                  style={styles.input}
-                  placeholderTextColor="#566573"
-                  placeholder="Pesan (opsional)"
-                  onChangeText={handleChange('description')}
-                  onBlur={handleBlur('description')}
-                  value={values.description}
-                />
-              </View>
-            </View>
-            <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-              <Text style={styles.btnText}>LANJUTKAN</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </Formik>
+            )}
+          </Formik>
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }

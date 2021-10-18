@@ -14,7 +14,9 @@ const Header = ({navigation, scene}) => {
             scene.route.name === 'transfer' ||
             scene.route.name === 'history' ||
             scene.route.name === 'transferOvo' ||
-            scene.route.name === 'trxDetail'
+            scene.route.name === 'trxDetail' ||
+            scene.route.name === 'change' ||
+            scene.route.name === 'change2'
               ? 'chevron-left'
               : ''
           }
@@ -25,7 +27,9 @@ const Header = ({navigation, scene}) => {
             scene.route.name === 'transfer' ||
             scene.route.name === 'history' ||
             scene.route.name === 'transferOvo' ||
-            scene.route.name === 'trxDetail'
+            scene.route.name === 'trxDetail' ||
+            scene.route.name === 'change' ||
+            scene.route.name === 'change2'
               ? '#fff'
               : '#000'
           }
@@ -55,7 +59,7 @@ const HeaderStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 20,
+    // paddingTop: 20,
   },
 });
 

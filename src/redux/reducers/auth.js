@@ -23,6 +23,7 @@ const auth = (state = initialState, action) => {
     case 'AUTH_LOGIN_FAILED': {
       return {
         ...state,
+        token: null,
         errMsg: action.payload,
       };
     }

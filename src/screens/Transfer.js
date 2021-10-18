@@ -19,7 +19,7 @@ export default class Transfer extends Component {
                 style={styles.row1}>
                 <View style={styles.row2}>
                   <Icon name="send-to-mobile" color="#5DCDD2" size={25} />
-                  <Text style={styles.h3}>Ke Sesama OVO</Text>
+                  <Text style={styles.h3}>Ke Sesama OXO</Text>
                 </View>
                 <Icon4 size={18} name="chevron-right" />
               </TouchableOpacity>

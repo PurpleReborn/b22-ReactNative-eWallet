@@ -4,6 +4,9 @@ const initialState = {
   msgRecipient: '',
   msgSender: '',
   msg: '',
+  pageInfo: {},
+  search: [],
+  pageInfoSearch: {},
 };
 
 const transfers = (state = initialState, action) => {
@@ -37,13 +40,30 @@ const transfers = (state = initialState, action) => {
       return {
         ...state,
         dataSender: action.payload.results,
-        msgSender: action.payload.message,
+        // dataSender: [...state.dataSender, ...action.payload.results],
+        pageInfo: action.payload.pageInfo,
+      };
+    }
+    case 'TRANSFER_HISTORY_BY_SENDER2': {
+      return {
+        ...state,
+        search: action.payload.results,
+        // dataSender: [...state.dataSender, ...action.payload.results],
+        pageInfoSearch: action.payload.pageInfo,
       };
     }
     case 'TRANSFER_HISTORY_BY_SENDER_FAILED': {
       return {
         ...state,
         msgSender: action.payload,
+      };
+    }
+    case 'TRANSACTION_RESET': {
+      return {
+        ...state,
+        msg: '',
+        msgSender: '',
+        msgRecipient: '',
       };
     }
     default: {

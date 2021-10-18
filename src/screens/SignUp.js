@@ -1,42 +1,55 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
-  Text,
   View,
+  Text,
   StyleSheet,
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import {Input} from 'react-native-elements';
-import {connect} from 'react-redux';
-import {authLogin} from '../redux/actions/auth';
 import {useState} from 'react';
 import {useDispatch} from 'react-redux';
+import {authRegister} from '../redux/actions/auth';
+import {Input} from 'react-native-elements';
 
-const MasukAtauDaftar = ({navigation}) => {
-  const [phone, setPhone] = useState('');
+const SignUp = ({navigation}) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [balance] = useState('0');
+  const [name] = useState('Your Name');
 
   const dispatch = useDispatch();
 
   const formData = {
-    phone: phone,
+    email: email,
     password: password,
+    phone: phone,
+    balance: balance,
+    name: name,
   };
 
-  const onLogin = () => {
-    if (formData.phone.length >= 10) {
-      if (formData.password.length >= 8) {
-        dispatch(authLogin(formData, navigation));
+  const onSubmit = () => {
+    if (formData.email.length > 6) {
+      if (formData.phone.length >= 10) {
+        if (formData.password.length >= 8) {
+          dispatch(authRegister(formData, navigation));
+        } else {
+          ToastAndroid.showWithGravity(
+            'Password Must be length more than 8 Characters',
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+          );
+        }
       } else {
         ToastAndroid.showWithGravity(
-          'Password Must be length more than 8 Characters',
+          'Phone number Must be length more than 10 number',
           ToastAndroid.LONG,
           ToastAndroid.TOP,
         );
       }
     } else {
       ToastAndroid.showWithGravity(
-        'Phone number Must be length more than 10 number',
+        'Email is required',
         ToastAndroid.LONG,
         ToastAndroid.TOP,
       );
@@ -46,10 +59,17 @@ const MasukAtauDaftar = ({navigation}) => {
   return (
     <View style={styles.parent}>
       <View style={styles.parent2}>
-        <Text style={styles.h1}> Masuk atau Daftar </Text>
-        <Text style={styles.h2}>
-          Masuk atau daftar cuma butuh nomor HP aja.
-        </Text>
+        <Text style={styles.h1}> Sign Up </Text>
+        <Text style={styles.h2}>Daftar dengan Mudah disini</Text>
+        <TouchableOpacity style={styles.btncode2}>
+          <Input
+            style={styles.input}
+            // keyboardType="email-address"
+            placeholder="Masukan Email"
+            value={email}
+            onChangeText={value => setEmail(value)}
+          />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.btn}>
           <Input
             style={styles.input}
@@ -69,36 +89,21 @@ const MasukAtauDaftar = ({navigation}) => {
             onChangeText={value => setPassword(value)}
           />
         </TouchableOpacity>
-        <View style={styles.belum}>
-          <Text style={styles.belumText}>Belum punya akun?</Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.masuk}
-          onPress={() => navigation.navigate('signUp')}>
-          <Text style={styles.masukText}>Daftar disini</Text>
-        </TouchableOpacity>
       </View>
       <View style={styles.bottom}>
         <Text style={styles.textBottom}>
           Dengan masuk atau daftar,kamu udah setuju sama Ketentuan Layanan dan
           Kebijakan Privasi OXO
         </Text>
-        <TouchableOpacity onPress={onLogin} style={styles.btn2}>
-          <Text style={styles.btnText2}>Lanjutkan</Text>
+        <TouchableOpacity onPress={onSubmit} style={styles.btn2}>
+          <Text style={styles.btnText2}>Daftar</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-const mapStateToProps = state => ({
-  auth: state.auth,
-});
-
-const mapDispatchToProps = {authLogin};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MasukAtauDaftar);
+export default SignUp;
 
 const styles = StyleSheet.create({
   parent: {
@@ -120,13 +125,19 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: '#EAEDED',
     borderBottomWidth: 0,
-    marginTop: 40,
+    marginTop: 20,
     marginRight: 20,
   },
   btncode: {
     backgroundColor: '#EAEDED',
     borderBottomWidth: 0,
     marginTop: 20,
+    marginRight: 20,
+  },
+  btncode2: {
+    backgroundColor: '#EAEDED',
+    borderBottomWidth: 0,
+    marginTop: 40,
     marginRight: 20,
   },
   btn2: {
@@ -150,23 +161,5 @@ const styles = StyleSheet.create({
   },
   bottom: {
     elevation: 24,
-  },
-  // masuk: {
-  // marginHorizontal: 10,
-  // justifyContent: 'flex-end',
-  // flexDirection: 'row',
-  // },
-  belum: {
-    // marginHorizontal: 10,
-    // justifyContent: 'flex-end',
-    // flexDirection: 'row',
-    marginTop: 10,
-  },
-  belumText: {
-    fontSize: 15,
-  },
-  masukText: {
-    color: '#49268c',
-    fontSize: 15,
   },
 });

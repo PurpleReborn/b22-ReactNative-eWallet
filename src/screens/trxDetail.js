@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+  FlatList,
   Text,
   View,
   StyleSheet,
@@ -9,8 +10,17 @@ import {
 } from 'react-native';
 import {transaction} from '../redux/actions/trx';
 import {connect} from 'react-redux';
-import {Input} from 'react-native-elements';
+import {getUser} from '../redux/actions/user';
+// import {Input} from 'react-native-elements';
 import PushNotification from 'react-native-push-notification';
+
+// setTimeout(() => {
+//   PushNotification.localNotification({
+//     channelId: 'general-notif',
+//     title: 'OVO',
+//     message: 'Payment Success',
+//   });
+// }, 2000);
 
 class trxDetail extends Component {
   state = {
@@ -18,6 +28,30 @@ class trxDetail extends Component {
     description: 'Beli Pulsa',
     trxFee: 1000,
     refNo: 0,
+    amount: 0,
+    items: [
+      {id: '1', name: '5.000', value: '5000', selected: 'yes'},
+      {id: '2', name: '10.000', value: '10000', selected: 'no'},
+      {id: '3', name: '15.000', value: '15000', selected: 'no'},
+      {id: '4', name: '20.000', value: '20000', selected: 'no'},
+      {id: '5', name: '25.000', value: '25000', selected: 'yes'},
+      {id: '6', name: '30.000', value: '30000', selected: 'no'},
+      {id: '7', name: '50.000', value: '50000', selected: 'no'},
+      {id: '8', name: '100.000', value: '100000', selected: 'no'},
+    ],
+    selectedId: '0',
+  };
+
+  handleOnPress = item => {
+    this.setState(
+      {
+        deductedBalance: item.value,
+        selectedId: item.id,
+      },
+      () => {
+        console.log(this.state.deductedBalance);
+      },
+    );
   };
 
   OnTrx = () => {
@@ -28,31 +62,26 @@ class trxDetail extends Component {
       trxFee: this.state.trxFee,
       refNo: this.state.refNo,
     };
-    this.props.transaction(token, formData).then(() => {
-      if (this.props.auth.errMsg === '') {
-        setTimeout(() => {
-          PushNotification.localNotification({
-            channelId: 'general-notif',
-            title: 'OVO',
-            message: 'Payment Success',
-          });
-        }, 2000);
-        ToastAndroid.showWithGravity(
-          'Payment Success',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-        return this.props.navigation.reset({
-          routes: [{name: 'home'}],
+    if (this.state.refNo >= 9) {
+      if (this.state.deductedBalance >= 5000) {
+        this.props.transaction(token, formData).then(() => {
+          this.props.getUser(token);
         });
+        this.props.navigation.navigate('home');
       } else {
         ToastAndroid.showWithGravity(
-          `${this.props.auth.errMsg}`,
+          'Minimum Pembayaran 5.000',
           ToastAndroid.LONG,
           ToastAndroid.TOP,
         );
       }
-    });
+    } else {
+      ToastAndroid.showWithGravity(
+        'Masukan nomor Ponsel dengan minimal 10 Angka',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+    }
   };
 
   render() {
@@ -76,50 +105,33 @@ class trxDetail extends Component {
             />
           </View>
           <View style={styles.inputWrap3}>
-            <Text style={styles.atau}>Nominal :</Text>
-            <Input
-              style={styles.input3}
-              placeholderTextColor="#566573"
-              // placeholder="Nominal"
-              keyboardType="number-pad"
-              value={this.state.deductedBalance}
-              onChangeText={val => this.setState({deductedBalance: val})}
-            />
+            <Text style={styles.atau}>
+              Nominal Pulsa :{' '}
+              <Text style={styles.total}> {this.state.deductedBalance}</Text>
+            </Text>
           </View>
           <View style={styles.box2}>
-            <Text style={styles.pilih}>Pulsa</Text>
-            <View style={styles.nominalRowTop}>
-              <TouchableOpacity style={styles.boxrp}>
-                <Text style={styles.rp}>5000</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.boxrp}>
-                <Text style={styles.rp}>10.000</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.nominalRow}>
-              <TouchableOpacity style={styles.boxrp}>
-                <Text style={styles.rp}>15.000</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.boxrp}>
-                <Text style={styles.rp}>20.000</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.nominalRow}>
-              <TouchableOpacity style={styles.boxrp}>
-                <Text style={styles.rp}>25.000</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.boxrp}>
-                <Text style={styles.rp}>30.000</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.nominalRowBottom}>
-              <TouchableOpacity style={styles.boxrp}>
-                <Text style={styles.rp}>50.000</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.boxrp}>
-                <Text style={styles.rp}>100.000</Text>
-              </TouchableOpacity>
-            </View>
+            <FlatList
+              numColumns={2}
+              data={this.state.items}
+              // extraData={selectedAmountId}
+              keyExtractor={(item, index) => {
+                return index.toString();
+              }}
+              renderItem={({item}) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => this.handleOnPress(item)}
+                    style={
+                      item.id === this.state.selectedId // <-- match id property
+                        ? styles.boxrp2
+                        : styles.boxrp
+                    }>
+                    <Text style={styles.rp}>{item.name}</Text>
+                  </TouchableOpacity>
+                );
+              }}
+            />
           </View>
         </View>
         <View>
@@ -138,7 +150,7 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = {transaction};
+const mapDispatchToProps = {transaction, getUser};
 
 export default connect(mapStateToProps, mapDispatchToProps)(trxDetail);
 
@@ -222,6 +234,8 @@ const styles = StyleSheet.create({
     // marginTop: 10,
     backgroundColor: '#fff',
     paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   pilih: {
     fontWeight: 'bold',
@@ -231,12 +245,30 @@ const styles = StyleSheet.create({
   boxrp: {
     borderRadius: 10,
     paddingHorizontal: 13,
+    marginHorizontal: 5,
+    marginVertical: 5,
     paddingVertical: 7,
     backgroundColor: '#fff',
     width: 155,
     height: 70,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#EAEDED',
+  },
+  boxrp2: {
+    borderRadius: 10,
+    paddingHorizontal: 13,
+    marginHorizontal: 5,
+    marginVertical: 5,
+    paddingVertical: 7,
+    backgroundColor: '#fff',
+    width: 155,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#49268c',
   },
   input: {
     borderRadius: 10,
@@ -276,5 +308,9 @@ const styles = StyleSheet.create({
   inputWrap3: {
     paddingHorizontal: 20,
     paddingVertical: 10,
+  },
+  total: {
+    color: 'black',
+    fontSize: 16,
   },
 });

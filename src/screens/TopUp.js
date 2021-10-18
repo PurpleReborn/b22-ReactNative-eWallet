@@ -9,50 +9,57 @@ import {
 } from 'react-native';
 import {topUp} from '../redux/actions/topUp';
 import {connect} from 'react-redux';
+import {getUser} from '../redux/actions/user';
 
-import PushNotification from 'react-native-push-notification';
 import {authNotifToken} from '../redux/actions/auth';
 
 class TopUp extends Component {
-  state = {
-    deductedBalance: 0,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      deductedBalance: '0',
+      items: [
+        {id: '1', name: '10.000', value: '10000', selected: 'yes'},
+        {id: '2', name: '50.000', value: '50000', selected: 'no'},
+        {id: '3', name: '100.000', value: '100000', selected: 'no'},
+      ],
+      selectedId: '0',
+    };
+  }
 
   // componentDidMount() {
   //   const {token, notifToken} = this.props.auth;
   //   this.props.authNotifToken(token, notifToken);
   // }
+  handleOnPress = item => {
+    this.setState(
+      {
+        deductedBalance: item.value,
+        selectedId: item.id,
+      },
+      () => {
+        console.log(this.state.deductedBalance);
+      },
+    );
+  };
 
   OnTopUp = () => {
     const {token} = this.props.auth;
     const formData = {
       deductedBalance: this.state.deductedBalance,
     };
-    this.props.topUp(formData, token).then(() => {
-      if (this.props.auth.errMsg === '') {
-        setTimeout(() => {
-          PushNotification.localNotification({
-            channelId: 'general-notif',
-            title: 'OVO',
-            message: 'Top Up Success',
-          });
-        }, 2000);
-        ToastAndroid.showWithGravity(
-          'Mobile Topup success',
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-        return this.props.navigation.reset({
-          routes: [{name: 'home'}],
-        });
-      } else {
-        ToastAndroid.showWithGravity(
-          `${this.props.auth.errMsg}`,
-          ToastAndroid.LONG,
-          ToastAndroid.TOP,
-        );
-      }
-    });
+    if (this.state.deductedBalance >= 10000) {
+      this.props.topUp(formData, token).then(() => {
+        this.props.getUser(token);
+      });
+      this.props.navigation.navigate('home');
+    } else {
+      ToastAndroid.showWithGravity(
+        'Minimum TopUp 10.000',
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+      );
+    }
   };
 
   render() {
@@ -67,10 +74,10 @@ class TopUp extends Component {
               <Text style={styles.h2}>Top Up ke</Text>
               <TouchableOpacity style={styles.row1}>
                 <View style={styles.ovo}>
-                  <Text style={styles.ovotext}>OVO</Text>
+                  <Text style={styles.ovotext}>OXO</Text>
                 </View>
                 <View>
-                  <Text style={styles.h3}>OVO Cash</Text>
+                  <Text style={styles.h3}>OXO Cash</Text>
                   <Text>
                     Balance Rp <Text>0</Text>
                   </Text>
@@ -81,21 +88,45 @@ class TopUp extends Component {
           <View style={styles.box2}>
             <Text style={styles.pilih}>Pilih Nominal Top Up</Text>
             <View style={styles.nominalRow}>
-              <View style={styles.boxrp}>
+              {this.state.items.map((item, index) => {
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    onPress={() => this.handleOnPress(item)}
+                    // style={styles.boxrp}
+                    style={
+                      item.id === this.state.selectedId // <-- match id property
+                        ? styles.boxrp2
+                        : styles.boxrp
+                    }>
+                    <Text>
+                      Rp
+                      <Text>{item.name}</Text>
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+              {/* <TouchableOpacity
+                onPress={e => this.setState({deductedBalance: '10000'})}
+                style={styles.boxrp}>
+                <Text>
+                  Rp<Text>10.000</Text>
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={e => this.setState({deductedBalance: '50000'})}
+                style={styles.boxrp}>
+                <Text>
+                  Rp<Text>50.000</Text>
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={e => this.setState({deductedBalance: '100000'})}
+                style={styles.boxrp}>
                 <Text>
                   Rp<Text>100.000</Text>
                 </Text>
-              </View>
-              <View style={styles.boxrp}>
-                <Text>
-                  Rp<Text>100.000</Text>
-                </Text>
-              </View>
-              <View style={styles.boxrp}>
-                <Text>
-                  Rp<Text>100.000</Text>
-                </Text>
-              </View>
+              </TouchableOpacity> */}
             </View>
             <View>
               <Text style={styles.atau}>
@@ -127,7 +158,7 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = {topUp, authNotifToken};
+const mapDispatchToProps = {topUp, authNotifToken, getUser};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopUp);
 
@@ -204,6 +235,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     paddingVertical: 7,
   },
+  boxrp2: {
+    borderWidth: 3,
+    borderRadius: 20,
+    borderColor: '#49268c',
+    paddingHorizontal: 13,
+    paddingVertical: 7,
+  },
   input: {
     borderRadius: 10,
     paddingHorizontal: 15,
@@ -227,5 +265,11 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 20,
     marginVertical: 15,
+  },
+  textBox: {
+    color: 'red',
+  },
+  textBoxSelected: {
+    color: 'blue',
   },
 });
